@@ -1,2 +1,3 @@
-slope.pgm slope_hist.pgm hist 1
+slope.pgm slope_hist.pgm hist 2
 0 0 100 300 100 200
+500 500 1000 1000 300 400

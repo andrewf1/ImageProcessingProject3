@@ -64,15 +64,16 @@ int main (int argc, char** argv)
                     pch = strtok(NULL, " ");
                     int arg1 = atoi(pch);
                     cout << pch << endl;
-                    
+                    pch = strtok(NULL, " ");
+                    int arg2 = atoi(pch);
+                    cout << pch << endl;
+                }
+                else {
+                    cout << "ERROR: Function DNE" << endl;
+                    exit(1);
                 }
             }
         }
-
-        cout << "src_name = " << src_name << endl;
-        cout << "tgt_name = " << outfile << endl;
-        cout << "func_name = " << func_name << endl;
-        cout << "num_regions = " << num_regions << endl;
     }
 
     // while (fgets(str, MAXLEN, fp) != NULL) {
