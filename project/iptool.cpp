@@ -39,6 +39,36 @@ int main (int argc, char** argv)
         cout << pch << endl;
         int num_regions = atoi(pch);
 
+        if (num_regions > 3) {
+            cout << "Only 3 ROI allowed" << endl;
+            exit(1);
+        }
+
+        vector<roi> regions;
+        for (int i = 0; i < num_regions; i++) {
+            if (fgets(str, MAXLEN, fp) != NULL) {
+                pch = strtok(str, " ");
+                int x = atoi(pch);
+                cout << pch << endl;
+                pch = strtok(NULL, " ");
+                int y = atoi(pch);
+                cout << pch << endl;
+                pch = strtok(NULL, " ");
+                int sx = atoi(pch);
+                cout << pch << endl;
+                pch = strtok(NULL, " ");
+                int sy = atoi(pch);
+                cout << pch << endl;
+
+                if (func_name == "hist") {
+                    pch = strtok(NULL, " ");
+                    int arg1 = atoi(pch);
+                    cout << pch << endl;
+                    
+                }
+            }
+        }
+
         cout << "src_name = " << src_name << endl;
         cout << "tgt_name = " << outfile << endl;
         cout << "func_name = " << func_name << endl;
