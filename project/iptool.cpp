@@ -27,11 +27,11 @@ int main (int argc, char** argv)
         src.read(pch); // creating the source image
         string src_name = pch;
 
-        pch = strtok(str, " ");
+        pch = strtok(NULL, " ");
         cout << pch << endl;
         strcpy(outfile, pch);
 
-        pch = strtok(str , " ");
+        pch = strtok(NULL, " ");
         cout << pch << endl;
         string func_name = pch;
 
