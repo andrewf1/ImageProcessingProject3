@@ -1,0 +1,9 @@
+1
+0 0 400 300 100 200 50 150 50 150 50 150 50 150
+park.pgm park_hs.pgm hist_stretch
+floor.pgm floor_ot.pgm opt_thresh
+park.pgm park_comb_hist_thresh.pgm comb_hist_thresh
+ball.ppm ball_hist_red.ppm hist_red
+ball.ppm ball_hist_green.ppm hist_green
+ball.ppm ball_hist_blue.ppm hist_blue
+ball.ppm ball_hist_rgb.ppm hist_rgb
