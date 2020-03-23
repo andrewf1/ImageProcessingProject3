@@ -23,17 +23,22 @@ int main (int argc, char** argv)
 
     while (fgets(str, MAXLEN, fp) != NULL) {
         pch = strtok(str, " ");
+        cout << "pch" << endl;
         src.read(pch); // creating the source image
         string src_name = pch;
 
         pch = strtok(str, " ");
+        cout << "pch" << endl;
         strcpy(outfile, pch);
 
         pch = strtok(str , " ");
+        cout << "pch" << endl;
         string func_name = pch;
 
         pch = strtok(NULL, " ");
+        cout << "pch" << endl;
         pch[strlen(pch) - 1] = '\0';
+        cout << "pch" << endl;
         int num_regions = atoi(pch);
 
         cout << "src_name = " << src_name << endl;
@@ -46,7 +51,7 @@ int main (int argc, char** argv)
     //     pch = strtok(str, " ");
     //     src.read(pch); // creating the source image
     //     string src_name = pch;
-
+~
     //     pch = strtok(NULL, " ");
     //     strcpy(outfile, pch);
 
