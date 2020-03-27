@@ -215,6 +215,6 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 }
 
 /*-----------------------------------------------------------------------**/
-void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& regions, const int& threshold, const int& direction) {
+void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& regions) {
 
 }
