@@ -139,7 +139,7 @@ pair<int, int> getGradientXY(const vector<vector<int>>& pixelVals) {
 	return make_pair(x_grad, y_grad);
 }
 
-void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regions, const int& threshold, const int& direction) {
+void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regions) {
 	tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 	image temp_img;
 	temp_img.copyImage(src);

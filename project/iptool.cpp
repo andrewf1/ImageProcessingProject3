@@ -23,20 +23,16 @@ int main (int argc, char** argv)
 
     while (fgets(str, MAXLEN, fp) != NULL) {
         pch = strtok(str, " ");
-        cout << pch << endl;
         src.read(pch); // creating the source image
         string src_name = pch;
 
         pch = strtok(NULL, " ");
-        cout << pch << endl;
         strcpy(outfile, pch);
 
         pch = strtok(NULL, " ");
-        cout << pch << endl;
         string func_name = pch;
 
         pch = strtok(NULL, " ");
-        cout << pch << endl;
         int num_regions = atoi(pch);
 
         if (num_regions > 3) {
@@ -49,36 +45,52 @@ int main (int argc, char** argv)
             if (fgets(str, MAXLEN, fp) != NULL) {
                 pch = strtok(str, " ");
                 int x = atoi(pch);
-                cout << pch << endl;
                 pch = strtok(NULL, " ");
                 int y = atoi(pch);
-                cout << pch << endl;
                 pch = strtok(NULL, " ");
                 int sx = atoi(pch);
-                cout << pch << endl;
                 pch = strtok(NULL, " ");
                 int sy = atoi(pch);
-                cout << pch << endl;
+
+                cout << "func_name = " << func_name << endl;
 
                 if (func_name == "gray_edge") {
                     pch = strtok(NULL, " ");
                     int gray_thresh = atoi(pch);
                     pch = strtok(NULL, " ");
                     int gray_direction = atoi(pch);
-                    // function call here
+                    roi new_region = roi(x, y, sx, sy);
+                    new_region.gray_threshold = gray_thresh;
+                    new_region.gray_direction = gray_direction;
+                    regions.push_back(new_region);
                 }
                 else if (func_name == "color_edge") {
                     pch = strtok(NULL, " ");
                     int color_thresh = atoi(pch);
                     pch = strtok(NULL, " ");
                     int color_direction = atoi(pch);
-                    // function call here
+                    roi new_region = roi(x, y, sx, sy);
+                    new_region.color_threshold = color_thresh;
+                    new_region.color_direction = color_direction;
+                    regions.push_back(new_region);                   
                 }
                 else {
                     cout << "ERROR: Function DNE" << endl;
                     exit(1);
                 }
             }
+        }
+
+    
+        if (func_name == "gray_edge") {
+            utility::grayEdgeDetection(src, tgt, regions);
+        }
+        else if (func_name == "color_edge") {
+            utility::colorEdgeDetection(src, tgt, regions);
+        }
+        else {
+            cout << "ERROR: Function DNE" << endl;
+            exit(1);
         }
     }
 
