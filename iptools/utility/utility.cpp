@@ -159,10 +159,10 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 				) { // inside the region
 					cout << "in roi # " << r << endl;
 					int curr_pixel = temp_img.getPixel(i, j); // idx [1][1]
-					vector<vector<int>> pixelHoodVals;
+					vector<vector<int>> pixelHoodVals(3);
 					for (int row = 0; row < 3; row++) {
 						for (int col = 0; col < 3; col++) {
-							pixelHoodVals.at(row).at(col) = 0;
+							pixelHoodVals.at(row).push_back(0);
 						}
 					}
 					
