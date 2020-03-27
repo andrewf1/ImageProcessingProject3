@@ -1,4 +1,2 @@
-slope.pgm slope_hist.pgm hist 2
-0 0 100 300 100 200
 tree.pgm tree_edge_d.pgm gray_edge 1
 0 0 200 200 110 110
