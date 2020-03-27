@@ -148,8 +148,7 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 		int y = regions.at(r).y;
 		int sx = regions.at(r).sx;
 		int sy = regions.at(r).sy;
-		// int thresh = regions.at(r).gray_threshold;
-		// int dir = regions.at(r).gray_direction;
+		cout << "in roi" << endl;
 		for (int i = 0; i < temp_img.getNumberOfRows(); i++) {
 			for (int j = 0; j < temp_img.getNumberOfColumns(); j++) {
 				if (
@@ -158,11 +157,11 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 					j >= x &&
 					j < (x + sx)
 				) { // inside the region
+					cout << "in roi # " << r << endl;
 					int curr_pixel = temp_img.getPixel(i, j); // idx [1][1]
 					vector<vector<int>> pixelHoodVals;
 					for (int row = 0; row < 3; row++) {
-						for (int col = 0; col < pixelHoodVals.at(row).size(); col++) {
-							
+						for (int col = 0; col < 3; col++) {
 							pixelHoodVals.at(row).at(col) = 0;
 						}
 					}
