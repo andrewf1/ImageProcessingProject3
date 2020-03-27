@@ -103,3 +103,118 @@ void utility::increaseBrightness(image& src, image& tgt, const int& threshold, c
 }
 
 /*-----------------------------------------------------------------------**/
+bool isIndexInRegion(const roi& region, const int& i, const int& j) {
+	return i >= region.y && 
+		i < (region.y + region.sy) &&
+		j >= region.x &&
+		j < (region.x + region.sx);
+}
+
+// returns a pair, first is the X gradient, second is the Y gradient
+pair<int, int> getGradientXY(const vector<vector<int>>& pixelVals) {
+	int x_grad = (
+		(pixelVals[0][0] * gradient_x_kernal[0][0]) +
+		(pixelVals[0][1] * gradient_x_kernal[0][1]) +
+		(pixelVals[0][2] * gradient_x_kernal[0][2]) +
+		(pixelVals[1][0] * gradient_x_kernal[1][0]) +
+		(pixelVals[1][1] * gradient_x_kernal[1][1]) +
+		(pixelVals[1][2] * gradient_x_kernal[1][2]) +
+		(pixelVals[2][0] * gradient_x_kernal[2][0]) +
+		(pixelVals[2][1] * gradient_x_kernal[2][1]) +
+		(pixelVals[2][2] * gradient_x_kernal[2][2])
+	);
+
+	int y_grad = (
+		(pixelVals[0][0] * gradient_y_kernal[0][0]) +
+		(pixelVals[0][1] * gradient_y_kernal[0][1]) +
+		(pixelVals[0][2] * gradient_y_kernal[0][2]) +
+		(pixelVals[1][0] * gradient_y_kernal[1][0]) +
+		(pixelVals[1][1] * gradient_y_kernal[1][1]) +
+		(pixelVals[1][2] * gradient_y_kernal[1][2]) +
+		(pixelVals[2][0] * gradient_y_kernal[2][0]) +
+		(pixelVals[2][1] * gradient_y_kernal[2][1]) +
+		(pixelVals[2][2] * gradient_y_kernal[2][2])
+	);
+
+	return make_pair(x_grad, y_grad);
+}
+
+void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regions, const int& threshold, const int& direction) {
+	tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
+	image temp_img;
+	temp_img.copyImage(src);
+	for (int r = 0; r < regions.size(); r++) {
+		int x = regions.at(r).x;
+		int y = regions.at(r).y;
+		int sx = regions.at(r).sx;
+		int sy = regions.at(r).sy;
+		// int thresh = regions.at(r).gray_threshold;
+		// int dir = regions.at(r).gray_direction;
+		for (int i = 0; i < temp_img.getNumberOfRows(); i++) {
+			for (int j = 0; j < temp_img.getNumberOfColumns(); j++) {
+				if (
+					i >= y && 
+					i < (y + sy) &&
+					j >= x &&
+					j < (x + sx)
+				) { // inside the region
+					int curr_pixel = temp_img.getPixel(i, j); // idx [1][1]
+					vector<vector<int>> pixelHoodVals;
+					for (int row = 0; row < 3; row++) {
+						for (int col = 0; col < pixelHoodVals.at(row).size(); col++) {
+							
+							pixelHoodVals.at(row).at(col) = 0;
+						}
+					}
+					
+					for (int k = i - 1; k < i + 1; k++) {
+						for (int l = j - 1; l < j + 1; j++) {
+							if (isIndexInRegion(regions.at(r), k, j)) {
+								if (k == i - 1 && l == j - 1) {
+									pixelHoodVals.at(0).at(0) = temp_img.getPixel(i - 1, j -1);
+								}
+								else if (k == i && l == j - 1) {
+									pixelHoodVals.at(0).at(1) = temp_img.getPixel(i, j - 1);
+								}
+								else if (k == i + 1 && l == j - 1) {
+									pixelHoodVals.at(0).at(2) = temp_img.getPixel(i + 1, j - 1);
+								}
+								else if (k == i - 1 && l == j) {
+									pixelHoodVals.at(1).at(0) = temp_img.getPixel(i - 1, j);
+								}
+								else if (k == i && l == j) {
+									pixelHoodVals.at(1).at(1) = temp_img.getPixel(i, j);
+								}
+								else if (k == i + 1 && l == j) {
+									pixelHoodVals.at(1).at(2) = temp_img.getPixel(i + 1, j);
+								}
+								else if (k == i - 1 && l == j + 1) {
+									pixelHoodVals.at(2).at(0) = temp_img.getPixel(i - 1, j + 1);
+								}
+								else if (k == i && l == j + 1) {
+									pixelHoodVals.at(2).at(1) = temp_img.getPixel(i, j + 1);
+								}
+								else if (k == i + 1 && l == j + 1) {
+									pixelHoodVals.at(2).at(2) = temp_img.getPixel(i + 1, j + 1);
+								}
+							}
+						}
+					}
+
+					int x_gradient = getGradientXY(pixelHoodVals).first;
+					int y_gradient = getGradientXY(pixelHoodVals).second;
+					// HOW TO NORMALIZE THIS
+					double gradient_amplitude = sqrt(pow(x_gradient, 2) + pow(y_gradient, 2));
+					double dir = atan(y_gradient/x_gradient);
+
+					temp_img.setPixel(i, j, gradient_amplitude);
+				}
+			}
+		}
+	}
+}
+
+/*-----------------------------------------------------------------------**/
+void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& regions, const int& threshold, const int& direction) {
+
+}
