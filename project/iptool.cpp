@@ -60,13 +60,19 @@ int main (int argc, char** argv)
                 int sy = atoi(pch);
                 cout << pch << endl;
 
-                if (func_name == "hist") {
+                if (func_name == "gray_edge") {
                     pch = strtok(NULL, " ");
-                    int arg1 = atoi(pch);
-                    cout << pch << endl;
+                    int gray_thresh = atoi(pch);
                     pch = strtok(NULL, " ");
-                    int arg2 = atoi(pch);
-                    cout << pch << endl;
+                    int gray_direction = atoi(pch);
+                    // function call here
+                }
+                else if (func_name == "color_edge") {
+                    pch = strtok(NULL, " ");
+                    int color_thresh = atoi(pch);
+                    pch = strtok(NULL, " ");
+                    int color_direction = atoi(pch);
+                    // function call here
                 }
                 else {
                     cout << "ERROR: Function DNE" << endl;
