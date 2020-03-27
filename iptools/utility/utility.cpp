@@ -104,6 +104,8 @@ void utility::increaseBrightness(image& src, image& tgt, const int& threshold, c
 
 /*-----------------------------------------------------------------------**/
 bool isIndexInRegion(const roi& region, const int& i, const int& j) {
+	cout << "i = " << i << endl;
+	cout << "j = " << j << endl;
 	return i >= region.y && 
 		i < (region.y + region.sy) &&
 		j >= region.x &&
@@ -169,6 +171,7 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 					for (int k = i - 1; k < i + 1; k++) {
 						for (int l = j - 1; l < j + 1; j++) {
 							if (isIndexInRegion(regions.at(r), k, j)) {
+								cout << "is in if statement to create hood vals" << endl;
 								if (k == i - 1 && l == j - 1) {
 									pixelHoodVals.at(0).at(0) = temp_img.getPixel(i - 1, j -1);
 								}
