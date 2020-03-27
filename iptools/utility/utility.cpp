@@ -200,16 +200,24 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 						}
 					}
 
+					cout << "set the new array values of the hood pixels" << endl;
 					int x_gradient = getGradientXY(pixelHoodVals).first;
 					int y_gradient = getGradientXY(pixelHoodVals).second;
-					// HOW TO NORMALIZE THIS
+					cout << "x_gradient = " << x_gradient << " // y_gradient = " << y_gradient << endl;
+					// HOW TO NORMALIZE THIS ???
 					double gradient_amplitude = sqrt(pow(x_gradient, 2) + pow(y_gradient, 2));
+					cout << "gradient_emplitue = " << gradient_amplitude << endl;
 					double dir = atan(y_gradient/x_gradient);
+					cout << "dir = " << dir << endl;
 
-					temp_img.setPixel(i, j, gradient_amplitude);
+					tgt.setPixel(i, j, checkValue(gradient_amplitude));
+				}
+				else {
+					tgt.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
 				}
 			}
 		}
+		temp_img.copyImage(tgt);
 	}
 }
 
