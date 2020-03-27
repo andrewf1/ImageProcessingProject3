@@ -22,14 +22,8 @@ class utility
 		static void binarize(image &src, image &tgt, int threshold);
 		static void scale(image &src, image &tgt, float ratio);
 		static void increaseBrightness(image& src, image& tgt, const int& threshold, const int& intensity);
-		static void histStretch(image& src, image& tgt, const vector<roi>& regions, string file_name);
-		static void optimalThresholding(image& src, image& tgt, const vector<roi>& regions);
-		static void recursiveOptThresh(image& src, image& tgt, const roi& reg, const vector<int>& pixelVals, const double& thresh);
-		static void combHistOptThresh(image& src, image& tgt, const vector<roi>& regions, string file_name);
-		static void histRed(image& src, image& tgt, const vector<roi>& regions, string file_name);
-		static void histGreen(image& src, image& tgt, const vector<roi>& regions, string file_name);
-		static void histBlue(image& src, image& tgt, const vector<roi>& regions, string file_name);
-		static void histRGB(image& src, image& tgt, const vector<roi>& regions, string file_name);
+		static void grayEdgeDetection(image& src, image& tgt, const vector<roi>& regions, const int& threshold, const int& direction);
+		static void colorEdgeDetection(image& src, image& tgt, const vector<roi>& regions, const int& threshold, const int& direction);
 };
 
 #endif
