@@ -215,7 +215,6 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 					}
 				}
 				else {
-					cout << "setting value to regular image" << endl;
 					amplitude_threshold.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
 				}
 			}
