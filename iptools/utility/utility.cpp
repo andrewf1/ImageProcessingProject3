@@ -170,7 +170,7 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 					// HOW TO NORMALIZE THIS ???
 					double gradient_amplitude = sqrt(pow(x_gradient, 2) + pow(y_gradient, 2));
 					cout << "gradient_emplitue = " << gradient_amplitude << endl;
-					double dir = atan(y_gradient/x_gradient) * (180/PI);
+					double dir = atan((double)y_gradient/(double)x_gradient) * (180/PI);
 					cout << "dir = " << dir << endl;
 
 					tgt.setPixel(i, j, checkValue(gradient_amplitude));
