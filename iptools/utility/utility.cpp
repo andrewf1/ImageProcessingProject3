@@ -145,16 +145,24 @@ gradient_amplitude getGradientXY(image& src, int i, int j, roi reg) {
 	return ga;
 }
 
-void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regions) {
+void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regions, char* outfile) {
 	tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
+	image amplitude_threshold;
+	amplitude_threshold.resize(src.getNumberOfRows(), src.getNumberOfColumns());
+
 	image temp_img;
+	double gradient_amplitude;
+	int direction_angle;
+
+	//  sobel operator
 	temp_img.copyImage(src);
 	for (int r = 0; r < regions.size(); r++) {
 		int x = regions.at(r).x;
 		int y = regions.at(r).y;
 		int sx = regions.at(r).sx;
 		int sy = regions.at(r).sy;
-		cout << "in roi" << endl;
+		int T = regions.at(r).gray_threshold;
+
 		for (int i = 0; i < temp_img.getNumberOfRows(); i++) {
 			for (int j = 0; j < temp_img.getNumberOfColumns(); j++) {
 				if (
@@ -163,25 +171,64 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 					j >= x &&
 					j < (x + sx)
 				) { // inside the region
-					cout << "in roi # " << r << endl;
 					int x_gradient = getGradientXY(src, i, j, regions.at(r)).gx;
 					int y_gradient = getGradientXY(src, i, j, regions.at(r)).gy;
-					cout << "x_gradient = " << x_gradient << " // y_gradient = " << y_gradient << endl;
-					// HOW TO NORMALIZE THIS ???
-					double gradient_amplitude = sqrt(pow(x_gradient, 2) + pow(y_gradient, 2));
-					cout << "gradient_emplitue = " << gradient_amplitude << endl;
-					double dir = atan((double)y_gradient/(double)x_gradient) * (180/PI);
-					cout << "dir = " << dir << endl;
+
+					gradient_amplitude = sqrt(pow(x_gradient, 2) + pow(y_gradient, 2));
+					direction_angle = atan((double)y_gradient/(double)x_gradient) * (180/PI);
+
+					if (gradient_amplitude < T) {
+						amplitude_threshold.setPixel(i, j, MINRGB);
+					}
+					else {
+						amplitude_threshold.setPixel(i, j, MAXRGB);
+					}
 
 					tgt.setPixel(i, j, checkValue(gradient_amplitude));
 				}
 				else {
 					tgt.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
+					amplitude_threshold.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
 				}
 			}
 		}
 		temp_img.copyImage(tgt);
 	}
+
+	//  gradient amplitude threshold
+	temp_img.copyImage(src);
+	for (int r = 0; r < regions.size(); r++) {
+		int x = regions.at(r).x;
+		int y = regions.at(r).y;
+		int sx = regions.at(r).sx;
+		int sy = regions.at(r).sy;
+		int T = regions.at(r).gray_threshold;
+
+		for (int i = 0; i < temp_img.getNumberOfRows(); i++) {
+			for (int j = 0; j < temp_img.getNumberOfColumns(); j++) {
+				if (
+					i >= y && 
+					i < (y + sy) &&
+					j >= x &&
+					j < (x + sx)
+				) { // inside the region
+					if (gradient_amplitude < T) {
+						amplitude_threshold.setPixel(i, j, MINRGB);
+					}
+					else {
+						amplitude_threshold.setPixel(i, j, MAXRGB);
+					}
+				}
+				else {
+					amplitude_threshold.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
+				}
+			}
+		}
+		temp_img.copyImage(amplitude_threshold);
+	}
+	amplitude_threshold.save(strcat(outfile, "_grad_amplitude_thresh"));
+
+	
 }
 
 /*-----------------------------------------------------------------------**/

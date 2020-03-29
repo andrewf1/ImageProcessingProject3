@@ -82,7 +82,7 @@ int main (int argc, char** argv)
         }
 
         if (func_name == "gray_edge") {
-            utility::grayEdgeDetection(src, tgt, regions);
+            utility::grayEdgeDetection(src, tgt, regions, outfile);
         }
         else if (func_name == "color_edge") {
             utility::colorEdgeDetection(src, tgt, regions);
