@@ -161,7 +161,6 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 		int y = regions.at(r).y;
 		int sx = regions.at(r).sx;
 		int sy = regions.at(r).sy;
-		int T = regions.at(r).gray_threshold;
 
 		for (int i = 0; i < temp_img.getNumberOfRows(); i++) {
 			for (int j = 0; j < temp_img.getNumberOfColumns(); j++) {
@@ -177,18 +176,10 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 					gradient_amplitude = sqrt(pow(x_gradient, 2) + pow(y_gradient, 2));
 					direction_angle = atan((double)y_gradient/(double)x_gradient) * (180/PI);
 
-					if (gradient_amplitude < T) {
-						amplitude_threshold.setPixel(i, j, MINRGB);
-					}
-					else {
-						amplitude_threshold.setPixel(i, j, MAXRGB);
-					}
-
 					tgt.setPixel(i, j, checkValue(gradient_amplitude));
 				}
 				else {
 					tgt.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
-					amplitude_threshold.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
 				}
 			}
 		}
@@ -226,9 +217,9 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 		}
 		temp_img.copyImage(amplitude_threshold);
 	}
-	amplitude_threshold.save(strcat(outfile, "_grad_amplitude_thresh"));
+	amplitude_threshold.save(strcat(outfile, "_grad_amplitude_thresh.pgm"));
 
-	
+
 }
 
 /*-----------------------------------------------------------------------**/
