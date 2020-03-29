@@ -187,7 +187,7 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 	}
 
 	//  gradient amplitude threshold
-	temp_img.copyImage(src);
+	temp_img.copyImage(tgt);
 	for (int r = 0; r < regions.size(); r++) {
 		int x = regions.at(r).x;
 		int y = regions.at(r).y;
