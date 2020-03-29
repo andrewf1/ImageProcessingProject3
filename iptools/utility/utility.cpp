@@ -2,6 +2,7 @@
 
 #define MAXRGB 255
 #define MINRGB 0
+#define PI 3.14159265358979323846
 #define THRESH_LIMIT 5
 
 double colorEuclideanDistance(color c1, color c2) {
@@ -103,42 +104,45 @@ void utility::increaseBrightness(image& src, image& tgt, const int& threshold, c
 }
 
 /*-----------------------------------------------------------------------**/
-bool isIndexInRegion(const roi& region, const int& i, const int& j) {
-	// cout << "i = " << i << endl;
-	// cout << "j = " << j << endl;
-	return i >= region.y && 
-		i < (region.y + region.sy) &&
-		j >= region.x &&
-		j < (region.x + region.sx);
+int getPixelIfInROI(image& src, int i, int j, roi& reg) {
+	if (
+		i >= reg.y && 
+		i < (reg.y + reg.sy) &&
+		j >= reg.x &&
+		j < (reg.x + reg.sx)
+	) {	// In the ROI
+		return src.getPixel(i, j);
+	}
+	else {
+		return 0;
+	}
 }
 
-// returns a pair, first is the X gradient, second is the Y gradient
-pair<int, int> getGradientXY(const vector<vector<int>>& pixelVals) {
-	int x_grad = (
-		(pixelVals[0][0] * gradient_x_kernal[0][0]) +
-		(pixelVals[0][1] * gradient_x_kernal[0][1]) +
-		(pixelVals[0][2] * gradient_x_kernal[0][2]) +
-		(pixelVals[1][0] * gradient_x_kernal[1][0]) +
-		(pixelVals[1][1] * gradient_x_kernal[1][1]) +
-		(pixelVals[1][2] * gradient_x_kernal[1][2]) +
-		(pixelVals[2][0] * gradient_x_kernal[2][0]) +
-		(pixelVals[2][1] * gradient_x_kernal[2][1]) +
-		(pixelVals[2][2] * gradient_x_kernal[2][2])
+gradient_amplitude getGradientXY(image& src, int i, int j, roi reg) {
+	int x_grad = 0, y_grad = 0;
+	gradient_amplitude ga;
+
+	x_grad = (
+		getPixelIfInROI(src, i + 1, j - 1, reg) +
+		getPixelIfInROI(src, i + 1, j, reg) * 2 +
+		getPixelIfInROI(src, i + 1, j + 1, reg) -
+		getPixelIfInROI(src, i - 1, j - 1, reg) -
+		getPixelIfInROI(src, i - 1, j, reg) * 2 -
+		getPixelIfInROI(src, i - 1, j + 1, reg)
 	);
 
-	int y_grad = (
-		(pixelVals[0][0] * gradient_y_kernal[0][0]) +
-		(pixelVals[0][1] * gradient_y_kernal[0][1]) +
-		(pixelVals[0][2] * gradient_y_kernal[0][2]) +
-		(pixelVals[1][0] * gradient_y_kernal[1][0]) +
-		(pixelVals[1][1] * gradient_y_kernal[1][1]) +
-		(pixelVals[1][2] * gradient_y_kernal[1][2]) +
-		(pixelVals[2][0] * gradient_y_kernal[2][0]) +
-		(pixelVals[2][1] * gradient_y_kernal[2][1]) +
-		(pixelVals[2][2] * gradient_y_kernal[2][2])
+	y_grad = (
+		getPixelIfInROI(src, i + 1, j + 1, reg) +
+		getPixelIfInROI(src, i, j + 1, reg) * 2 +
+		getPixelIfInROI(src, i - 1, j + 1, reg) -
+		getPixelIfInROI(src, i - 1, j - 1, reg) -
+		getPixelIfInROI(src, i, j - 1, reg) * 2 -
+		getPixelIfInROI(src, i + 1, j - 1, reg) 
 	);
 
-	return make_pair(x_grad, y_grad);
+	ga.gx = x_grad;
+	ga.gy = y_grad;
+	return ga;
 }
 
 void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regions) {
@@ -160,57 +164,13 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 					j < (x + sx)
 				) { // inside the region
 					cout << "in roi # " << r << endl;
-					int curr_pixel = temp_img.getPixel(i, j); // idx [1][1]
-					vector<vector<int>> pixelHoodVals(3);
-					for (int row = 0; row < 3; row++) {
-						for (int col = 0; col < 3; col++) {
-							pixelHoodVals.at(row).push_back(0);
-						}
-					}
-					
-					for (int k = i - 1; k <= i + 1; k++) {
-						for (int l = j - 1; l <= j + 1; j++) {
-							if (isIndexInRegion(regions.at(r), k, j)) {
-								cout << "is in if statement to create hood vals" << endl;
-								if (k == i - 1 && l == j - 1) {
-									pixelHoodVals.at(0).at(0) = temp_img.getPixel(i - 1, j -1);
-								}
-								else if (k == i && l == j - 1) {
-									pixelHoodVals.at(0).at(1) = temp_img.getPixel(i, j - 1);
-								}
-								else if (k == i + 1 && l == j - 1) {
-									pixelHoodVals.at(0).at(2) = temp_img.getPixel(i + 1, j - 1);
-								}
-								else if (k == i - 1 && l == j) {
-									pixelHoodVals.at(1).at(0) = temp_img.getPixel(i - 1, j);
-								}
-								else if (k == i && l == j) {
-									pixelHoodVals.at(1).at(1) = temp_img.getPixel(i, j);
-								}
-								else if (k == i + 1 && l == j) {
-									pixelHoodVals.at(1).at(2) = temp_img.getPixel(i + 1, j);
-								}
-								else if (k == i - 1 && l == j + 1) {
-									pixelHoodVals.at(2).at(0) = temp_img.getPixel(i - 1, j + 1);
-								}
-								else if (k == i && l == j + 1) {
-									pixelHoodVals.at(2).at(1) = temp_img.getPixel(i, j + 1);
-								}
-								else if (k == i + 1 && l == j + 1) {
-									pixelHoodVals.at(2).at(2) = temp_img.getPixel(i + 1, j + 1);
-								}
-							}
-						}
-					}
-
-					cout << "set the new array values of the hood pixels" << endl;
-					int x_gradient = getGradientXY(pixelHoodVals).first;
-					int y_gradient = getGradientXY(pixelHoodVals).second;
+					int x_gradient = getGradientXY(src, i, j, regions.at(r)).gx;
+					int y_gradient = getGradientXY(src, i, j, regions.at(r)).gy;
 					cout << "x_gradient = " << x_gradient << " // y_gradient = " << y_gradient << endl;
 					// HOW TO NORMALIZE THIS ???
 					double gradient_amplitude = sqrt(pow(x_gradient, 2) + pow(y_gradient, 2));
 					cout << "gradient_emplitue = " << gradient_amplitude << endl;
-					double dir = atan(y_gradient/x_gradient);
+					double dir = atan(y_gradient/x_gradient) * (180/PI);
 					cout << "dir = " << dir << endl;
 
 					tgt.setPixel(i, j, checkValue(gradient_amplitude));
