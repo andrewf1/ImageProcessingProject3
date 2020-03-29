@@ -204,14 +204,18 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 					j >= x &&
 					j < (x + sx)
 				) { // inside the region
+					cout << "gradinent_amplitude = " << gradient_amplitude << endl;
 					if (gradient_amplitude < T) {
+						cout << "in less than if state" << endl;
 						amplitude_threshold.setPixel(i, j, MINRGB);
 					}
 					else {
+						cout << "in else state" << endl;
 						amplitude_threshold.setPixel(i, j, MAXRGB);
 					}
 				}
 				else {
+					cout << "setting value to regular image" << endl;
 					amplitude_threshold.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
 				}
 			}
