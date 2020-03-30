@@ -140,8 +140,12 @@ gradient_amplitude getGradientXY(image& src, int i, int j, roi reg) {
 		getPixelIfInROI(src, i + 1, j - 1, reg) 
 	);
 
+	x_grad /= 8;
 	ga.gx = x_grad;
+
+	y_grad /= 8;
 	ga.gy = y_grad;
+	
 	return ga;
 }
 
