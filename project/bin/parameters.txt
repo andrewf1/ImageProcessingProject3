@@ -1,2 +1,4 @@
 tree.pgm tree_edge_d.pgm gray_edge 1
 0 0 300 300 200 110
+wheel.pgm wheel_d.pgm gray_edge 1
+0 0 300 300 200 110
