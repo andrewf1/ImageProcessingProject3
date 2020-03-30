@@ -145,28 +145,32 @@ gradient_amplitude getGradientXY(image& src, int i, int j, roi reg) {
 
 	y_grad /= 8;
 	ga.gy = y_grad;
-	
+
 	return ga;
 }
 
 void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regions, char* outfile) {
 	tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
-	image amplitude_threshold;
+	
+	image amplitude_threshold, direction_threshold;
 	amplitude_threshold.resize(src.getNumberOfRows(), src.getNumberOfColumns());
+	direction_threshold.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 
-	image temp_img, temp_img_gat;
+	image temp_img, temp_img_gat, temp_img_dir;
 	double gradient_amplitude;
-	int direction_angle;
+	double pixel_angle;
 
 	//  sobel operator
 	temp_img.copyImage(src);
 	temp_img_gat.copyImage(src);
+	temp_img_dir.copyImage(src);
 	for (int r = 0; r < regions.size(); r++) {
 		int x = regions.at(r).x;
 		int y = regions.at(r).y;
 		int sx = regions.at(r).sx;
 		int sy = regions.at(r).sy;
 		int T = regions.at(r).gray_threshold;
+		int angle = regions.at(r).gray_direction;
 
 		for (int i = 0; i < temp_img.getNumberOfRows(); i++) {
 			for (int j = 0; j < temp_img.getNumberOfColumns(); j++) {
@@ -180,7 +184,10 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 					int y_gradient = getGradientXY(src, i, j, regions.at(r)).gy;
 
 					gradient_amplitude = sqrt(pow(x_gradient, 2) + pow(y_gradient, 2));
-					direction_angle = atan((double)y_gradient/(double)x_gradient) * (180/PI);
+					pixel_angle = atan((double)y_gradient/(double)x_gradient) * (180/PI);
+
+					// setting intensity image
+					tgt.setPixel(i, j, checkValue(gradient_amplitude));
 
 					// setting amplitude thresholed img
 					if (gradient_amplitude < T) {
@@ -190,21 +197,36 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 						amplitude_threshold.setPixel(i, j, MAXRGB);
 					}
 
-					// setting intensity image
-					tgt.setPixel(i, j, checkValue(gradient_amplitude));
+					// setting direction threshold image
+					if (gradient_amplitude > T) {
+						if (
+							pixel_angle >= (angle - 10) &&
+							pixel_angle <= (angle + 10)
+						) {
+							direction_threshold.setPixel(i, j, MAXRGB);
+						}
+						else {
+							direction_threshold.setPixel(i, j, MINRGB);
+						}
+					}
 				}
 				else {
 					tgt.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
 					amplitude_threshold.setPixel(i, j, checkValue(temp_img_gat.getPixel(i, j)));
+					direction_threshold.setPixel(i, j, checkValue(temp_img_dir.getPixel(i, j)));
 				}
 			}
 		}
 		temp_img.copyImage(tgt);
 		temp_img_gat.copyImage(amplitude_threshold);
+		temp_img_dir.copyImage(direction_threshold);
 	}
  
 	char gat_img_name[100] = "grad_amplitude_thresh_";
 	amplitude_threshold.save(strcat(gat_img_name, outfile));
+
+	char dir_img_name[100] = "direction_thresh_";
+	direction_threshold.save(strcat(dir_img_name, outfile));
 }
 
 /*-----------------------------------------------------------------------**/
