@@ -198,9 +198,9 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 		temp_img.copyImage(tgt);
 		temp_img_gat.copyImage(amplitude_threshold);
 	}
-
-	cout << "saving tgt: " << strcat(outfile, "_grad_amplitude_thresh.pgm") << endl; 
-	amplitude_threshold.save(strcat(outfile, "_grad_amplitude_thresh.pgm"));
+ 
+	char gat_img_name[100] = "grad_amplitude_thresh_";
+	amplitude_threshold.save(strcat(gat_img_name, outfile));
 }
 
 /*-----------------------------------------------------------------------**/
