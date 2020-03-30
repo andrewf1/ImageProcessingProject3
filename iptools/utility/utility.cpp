@@ -180,11 +180,9 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 
 					// setting amplitude thresholed img
 					if (gradient_amplitude < T) {
-						cout << "in less than if state" << endl;
 						amplitude_threshold.setPixel(i, j, MINRGB);
 					}
 					else {
-						cout << "in else state" << endl;
 						amplitude_threshold.setPixel(i, j, MAXRGB);
 					}
 
