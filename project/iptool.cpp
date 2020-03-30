@@ -92,6 +92,7 @@ int main (int argc, char** argv)
             exit(1);
         }
 
+        cout << "saving tgt: " << outfile << endl;
         tgt.save(outfile);
     }
 
