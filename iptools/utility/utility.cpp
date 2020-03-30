@@ -150,17 +150,19 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 	image amplitude_threshold;
 	amplitude_threshold.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 
-	image temp_img;
+	image temp_img, temp_img_gat;
 	double gradient_amplitude;
 	int direction_angle;
 
 	//  sobel operator
 	temp_img.copyImage(src);
+	temp_img_gat.copyImage(src);
 	for (int r = 0; r < regions.size(); r++) {
 		int x = regions.at(r).x;
 		int y = regions.at(r).y;
 		int sx = regions.at(r).sx;
 		int sy = regions.at(r).sy;
+		int T = regions.at(r).gray_threshold;
 
 		for (int i = 0; i < temp_img.getNumberOfRows(); i++) {
 			for (int j = 0; j < temp_img.getNumberOfColumns(); j++) {
@@ -176,35 +178,7 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 					gradient_amplitude = sqrt(pow(x_gradient, 2) + pow(y_gradient, 2));
 					direction_angle = atan((double)y_gradient/(double)x_gradient) * (180/PI);
 
-					tgt.setPixel(i, j, checkValue(gradient_amplitude));
-				}
-				else {
-					tgt.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
-				}
-			}
-		}
-		temp_img.copyImage(tgt);
-	}
-
-	//  gradient amplitude threshold
-	temp_img.copyImage(src);
-	for (int r = 0; r < regions.size(); r++) {
-		int x = regions.at(r).x;
-		int y = regions.at(r).y;
-		int sx = regions.at(r).sx;
-		int sy = regions.at(r).sy;
-		int T = regions.at(r).gray_threshold;
-		cout << "T = " << T << endl;
-
-		for (int i = 0; i < temp_img.getNumberOfRows(); i++) {
-			for (int j = 0; j < temp_img.getNumberOfColumns(); j++) {
-				if (
-					i >= y && 
-					i < (y + sy) &&
-					j >= x &&
-					j < (x + sx)
-				) { // inside the region
-					cout << "gradinent_amplitude = " << gradient_amplitude << endl;
+					// setting amplitude thresholed img
 					if (gradient_amplitude < T) {
 						cout << "in less than if state" << endl;
 						amplitude_threshold.setPixel(i, j, MINRGB);
@@ -213,17 +187,21 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 						cout << "in else state" << endl;
 						amplitude_threshold.setPixel(i, j, MAXRGB);
 					}
+
+					// setting intensity image
+					tgt.setPixel(i, j, checkValue(gradient_amplitude));
 				}
 				else {
-					amplitude_threshold.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
+					tgt.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
+					amplitude_threshold.setPixel(i, j, checkValue(temp_img_gat.getPixel(i, j)));
 				}
 			}
 		}
-		temp_img.copyImage(amplitude_threshold);
+		temp_img.copyImage(tgt);
+		temp_img_gat.copyImage(amplitude_threshold);
 	}
-	amplitude_threshold.save(strcat(outfile, "_grad_amplitude_thresh.pgm"));
 
-
+	amplitude_threshold.save(strcat("grad_amplitude_thresh_", outfile));
 }
 
 /*-----------------------------------------------------------------------**/
