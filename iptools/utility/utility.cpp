@@ -513,6 +513,8 @@ void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& region
 
 					cout << "RGB before: " << temp_img.getPixel(i, j, RED) << ", " << temp_img.getPixel(i, j, GREEN) << ", " << temp_img.getPixel(i, j, BLUE) << endl;
 
+					cout << "HSI: " << hsi_pixel.h << ", " << hsi_pixel.s << ", " << hsi_pixel.i << endl;
+
 					RGB rgb_pixel = HSItoRGBI(hsi_pixel);
 					tgt.setPixel(i, j, RED, checkValue(rgb_pixel.r));
 					tgt.setPixel(i, j, GREEN, checkValue(rgb_pixel.g));
