@@ -409,18 +409,18 @@ void::utility::RGBEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 /*-----------------------------------------------------------------------**/
 HSI RGBtoHSI(int r, int g, int b) {
 	double h, s, i;
-	r = (double)r / (double)(r + g + b);
-	g = (double)g / (double)(r + g + b);
-	b = (double)b / (double)(r + g + b);
+	double norm_r = (double)r / (double)(r + g + b);
+	double norm_g = (double)g / (double)(r + g + b);
+	double norm_b = (double)b / (double)(r + g + b);
 
-	double num = 0.5 * ((r - g) + (r - b));
-	double den = sqrt(pow(r - g, 2) + ((r - b) * (g - b)));
+	double num = 0.5 * ((norm_r - norm_g) + (norm_r - norm_b));
+	double den = sqrt(pow(norm_r - norm_g, 2) + ((norm_r - norm_b) * (norm_g - norm_b)));
 
 	if (b <= g) {
 		h = acos(num/den);
 	}
 	else {
-		h = (2 * PI) - acos(num/den);
+		h = ((2 * PI) - (acos(num/den)));
 	}
 
 	s = 1 - (3 * min(min(r, g), b));
@@ -442,7 +442,7 @@ RGB HSItoRGBI(HSI pix) {
 	i = pix.i/255;
 
 	double x = i * (1 - s);
-	double y = i * (1 + ((s * cos(h)) / cos(PI/(3 - h))));
+	double y = i * (1 + (s * cos(h) / cos(PI/(3 - h))));
 	double z = (3 * i) - (x + y);
 
 	if (h < ((2 * PI) / 3)) {
