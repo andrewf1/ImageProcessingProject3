@@ -98,7 +98,7 @@ int main (int argc, char** argv)
             utility::RGBEdgeDetection(src, tgt, regions, outfile);
         }
         else if (func_name == "hsi_edge") {
-            
+            utility::HSIEdgeDetection(src, tgt, regions, outfile);
         }
         else {
             cout << "ERROR: Function DNE" << endl;
