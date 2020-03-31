@@ -3,5 +3,7 @@ tree.pgm tree_edge_d.pgm gray_edge 2
 300 300 50 50 15 100
 wheel.pgm wheel_d.pgm gray_edge 1
 0 0 300 300 10 45
-frog.ppm frog_edge_d.ppm color_edge 1
+frog.ppm frog_edge_d.ppm rgb_edge 1
+130 30 200 200 10 45
+frog.ppgm forg_hsi_edge_d.ppm hsi_edge 1
 130 30 200 200 10 45

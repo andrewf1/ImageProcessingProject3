@@ -64,7 +64,7 @@ int main (int argc, char** argv)
                     new_region.gray_direction = gray_direction;
                     regions.push_back(new_region);
                 }
-                else if (func_name == "color_edge") {
+                else if (func_name == "rgb_edge") {
                     pch = strtok(NULL, " ");
                     int color_thresh = atoi(pch);
                     pch = strtok(NULL, " ");
@@ -73,6 +73,16 @@ int main (int argc, char** argv)
                     new_region.color_threshold = color_thresh;
                     new_region.color_direction = color_direction;
                     regions.push_back(new_region);                   
+                }
+                else if (func_name == "hsi_edge") {
+                    pch = strtok(NULL, " ");
+                    int color_thresh = atoi(pch);
+                    pch = strtok(NULL, " ");
+                    int color_direction = atoi(pch);
+                    roi new_region = roi(x, y, sx, sy);
+                    new_region.color_threshold = color_thresh;
+                    new_region.color_direction = color_direction;
+                    regions.push_back(new_region);                        
                 }
                 else {
                     cout << "ERROR: Function DNE" << endl;
@@ -84,8 +94,11 @@ int main (int argc, char** argv)
         if (func_name == "gray_edge") {
             utility::grayEdgeDetection(src, tgt, regions, outfile);
         }
-        else if (func_name == "color_edge") {
-            utility::colorEdgeDetection(src, tgt, regions, outfile);
+        else if (func_name == "rgb_edge") {
+            utility::RGBEdgeDetection(src, tgt, regions, outfile);
+        }
+        else if (func_name == "hsi_edge") {
+            
         }
         else {
             cout << "ERROR: Function DNE" << endl;

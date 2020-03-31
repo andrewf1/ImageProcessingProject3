@@ -277,7 +277,7 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 }
 
 /*-----------------------------------------------------------------------**/
-void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& regions, char* outfile) {
+void::utility::RGBEdgeDetection(image& src, image& tgt, const vector<roi>& regions, char* outfile) {
 	tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 	image red_edge_detection, green_edge_detection, blue_edge_detection;
 	red_edge_detection.resize(src.getNumberOfRows(), src.getNumberOfColumns());
@@ -404,4 +404,125 @@ void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& reg
 
 	char blue_img_name[100] = "blue_ed_";
 	blue_edge_detection.save(strcat(blue_img_name, outfile));
+}
+
+/*-----------------------------------------------------------------------**/
+HSI RGBtoHSI(int r, int g, int b) {
+	double h, s, i;
+	r = r / (r + g + b);
+	g = g / (r + g + b);
+	b = b / (r + g + b);
+
+	double num = 0.5 * ((r - g) + (r - b));
+	double den = sqrt(pow(r - g, 2) + ((r - b) * (g - b)));
+
+	if (b <= g) {
+		h = acos(num/den);
+	}
+	else {
+		h = (2 * PI) - acos(num/den);
+	}
+
+	s = 1 - (3 * min(r, g, b));
+	i = (r + g + b) / (3 * 255);
+
+	HSI pix;
+	pix.h = h;
+	pix.i = i;
+	pix.s = s;
+	return pix;
+}
+
+RGB HSItoRGBI(HSI pix) {
+	double h, s, i;
+	int r, g, b;
+
+	h = pix.h * (PI/180);
+	s = pix.s/100;
+	i = pix.i/255;
+
+	double x = i * (1 - s);
+	double y = i * (1 + ((s * cos(h)) / cos(PI/(3 - h))));
+	double z = (3 * i) - (x + y);
+
+	if (h < ((2 * PI) / 3)) {
+		RGB rgb_pix;
+		rgb_pix.r = y * 255;
+		rgb_pix.g = z * 255;
+		rgb_pix.b = x * 255;
+		return rgb_pix;
+	}
+	else if (
+		h >= ((2 * PI) / 3) &&
+		h < ((4 * PI) / 3)	
+	) {
+		h -= ((2 * PI) / 3);
+		RGB rgb_pix;
+		rgb_pix.r = x * 255;
+		rgb_pix.g = y * 255;
+		rgb_pix.b = z * 255;
+		return rgb_pix;
+	}
+	else if (
+		h >= ((4 * PI) / 3) &&
+		h < (2 * PI)
+	) {
+		h -= ((4 * PI)/ 3);
+		RGB rgb_pix;
+		rgb_pix.r = z * 255;
+		rgb_pix.g = x * 255;
+		rgb_pix.b = y * 255;
+		return rgb_pix;
+	}
+	else {
+		cout << "Something is wrong with the H value" << endl;
+	}
+}
+
+void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& regions, char* outfile) {
+	tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
+	
+	image grad_amplitude_img;
+	grad_amplitude_img.resize(src.getNumberOfRows(), src.getNumberOfColumns());
+
+	image temp_img, temp_img_grad_amp;
+	double gradient_amplitude;
+
+	temp_img.copyImage(src);
+	temp_img_grad_amp.copyImage(src);
+	for (int r = 0; r < regions.size(); r++) {
+		int x = regions.at(r).x;
+		int y = regions.at(r).y;
+		int sx = regions.at(r).sx;
+		int sy = regions.at(r).sy;
+		int T = regions.at(r).color_threshold;
+
+		for (int i = 0; i < temp_img.getNumberOfRows(); i++) {
+			for (int j = 0; j < temp_img.getNumberOfColumns(); j++) {
+				if (
+					i >= y && 
+					i < (y + sy) &&
+					j >= x &&
+					j < (x + sx)
+				) { // inside the region
+					HSI hsi_pixel = RGBtoHSI(
+						temp_img.getPixel(i, j, RED),
+						temp_img.getPixel(i, j, GREEN),
+						temp_img.getPixel(i, j, BLUE)
+					);
+
+					RGB rgb_pixel = HSItoRGBI(hsi_pixel);
+					tgt.setPixel(i, j, RED, checkValue(rgb_pixel.r));
+					tgt.setPixel(i, j, GREEN, checkValue(rgb_pixel.g));
+					tgt.setPixel(i, j, BLUE, checkValue(rgb_pixel.b));			
+				}
+				else {
+					tgt.setPixel(i, j, RED, temp_img.getPixel(i, j, RED));
+					tgt.setPixel(i, j, GREEN, temp_img.getPixel(i, j, GREEN));
+					tgt.setPixel(i, j, BLUE, temp_img.getPixel(i, j, BLUE));
+				}
+			}
+		}
+		temp_img.copyImage(tgt);
+	}
 }
