@@ -151,7 +151,7 @@ gradient_amplitude getGradientXY(image& src, int i, int j, roi reg) {
 
 void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regions, char* outfile) {
 	tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
-	
+
 	image amplitude_threshold, direction_threshold;
 	amplitude_threshold.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 	direction_threshold.resize(src.getNumberOfRows(), src.getNumberOfColumns());
@@ -180,8 +180,9 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 					j >= x &&
 					j < (x + sx)
 				) { // inside the region
-					int x_gradient = getGradientXY(src, i, j, regions.at(r)).gx;
-					int y_gradient = getGradientXY(src, i, j, regions.at(r)).gy;
+					// calculating gx, gy, gradient amplitude, and edge direction using Sobel Operator 3x3
+					int x_gradient = getGradientXY(temp_img, i, j, regions.at(r)).gx;
+					int y_gradient = getGradientXY(temp_img, i, j, regions.at(r)).gy;
 
 					gradient_amplitude = sqrt(pow(x_gradient, 2) + pow(y_gradient, 2));
 					pixel_angle = atan((double)y_gradient/(double)x_gradient) * (180/PI);
@@ -230,6 +231,35 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 }
 
 /*-----------------------------------------------------------------------**/
-void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& regions) {
+void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& regions, char* outfile) {
+	tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 
+	image temp_img;
+	temp_img.copyImage(src);
+
+	for (int r = 0; r < regions.size(); r++) {
+		int x = regions.at(r).x;
+		int y = regions.at(r).y;
+		int sx = regions.at(r).sx;
+		int sy = regions.at(r).sy;
+		int T = regions.at(r).color_threshold;
+		int angle = regions.at(r).color_direction;
+
+		for (int i = 0; i < temp_img.getNumberOfRows(); i++) {
+			for (int j = 0; j < temp_img.getNumberOfColumns(); j++) {
+				if (
+					i >= y && 
+					i < (y + sy) &&
+					j >= x &&
+					j < (x + sx)
+				) { // inside the region
+
+				}
+				else {
+
+				}
+			}
+		}
+		temp_img.copyImage(tgt);
+	}
 }
