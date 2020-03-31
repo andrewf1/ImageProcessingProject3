@@ -452,10 +452,7 @@ RGB HSItoRGBI(HSI pix) {
 		rgb_pix.b = x * 255;
 		return rgb_pix;
 	}
-	else if (
-		h >= ((2 * PI) / 3) &&
-		h < ((4 * PI) / 3)	
-	) {
+	else if (h < ((4 * PI) / 3)) {
 		h -= ((2 * PI) / 3);
 		double y = i * (1 + (s * cos(h) / cos(PI/(3 - h))));
 		double z = (3 * i) - (x + y);
@@ -465,10 +462,7 @@ RGB HSItoRGBI(HSI pix) {
 		rgb_pix.b = z * 255;
 		return rgb_pix;
 	}
-	else if (
-		h >= ((4 * PI) / 3) &&
-		h < (2 * PI)
-	) {
+	else  {
 		h -= ((4 * PI)/ 3);
 		double y = i * (1 + (s * cos(h) / cos(PI/(3 - h))));
 		double z = (3 * i) - (x + y);
@@ -477,9 +471,6 @@ RGB HSItoRGBI(HSI pix) {
 		rgb_pix.g = x * 255;
 		rgb_pix.b = y * 255;
 		return rgb_pix;
-	}
-	else {
-		cout << "Something is wrong with the H value" << endl;
 	}
 }
 
@@ -515,15 +506,15 @@ void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& region
 						temp_img.getPixel(i, j, BLUE)
 					);
 
-					// cout << "RGB before: " << temp_img.getPixel(i, j, RED) << ", " << temp_img.getPixel(i, j, GREEN) << ", " << temp_img.getPixel(i, j, BLUE) << endl;
+					cout << "RGB before: " << temp_img.getPixel(i, j, RED) << ", " << temp_img.getPixel(i, j, GREEN) << ", " << temp_img.getPixel(i, j, BLUE) << endl;
 
-					// cout << "HSI: " << hsi_pixel.h << ", " << hsi_pixel.s << ", " << hsi_pixel.i << endl;
+					cout << "HSI: " << hsi_pixel.h << ", " << hsi_pixel.s << ", " << hsi_pixel.i << endl;
 
 					RGB rgb_pixel = HSItoRGBI(hsi_pixel);
 					tgt.setPixel(i, j, RED, checkValue(rgb_pixel.r));
 					tgt.setPixel(i, j, GREEN, checkValue(rgb_pixel.g));
 					tgt.setPixel(i, j, BLUE, checkValue(rgb_pixel.b));
-					// cout << "RGB after: " << rgb_pixel.r << ", " << rgb_pixel.g << ", " << rgb_pixel.b << endl;	
+					cout << "RGB after: " << rgb_pixel.r << ", " << rgb_pixel.g << ", " << rgb_pixel.b << endl;	
 				}
 				else {
 					tgt.setPixel(i, j, RED, temp_img.getPixel(i, j, RED));
