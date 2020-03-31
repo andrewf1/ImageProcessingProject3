@@ -4,4 +4,4 @@ tree.pgm tree_edge_d.pgm gray_edge 2
 wheel.pgm wheel_d.pgm gray_edge 1
 0 0 300 300 10 45
 frog.ppm frog_edge_d.ppm color_edge 1
-0 0 200 200 10 45
+130 30 200 200 10 45
