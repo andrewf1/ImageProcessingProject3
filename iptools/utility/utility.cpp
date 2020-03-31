@@ -424,7 +424,7 @@ HSI RGBtoHSI(int r, int g, int b) {
 	}
 
 	s = 1 - (3 * min(min(r, g), b));
-	i = (r + g + b) / (3 * 255);
+	i = (double)(r + g + b) / (double)(3 * 255);
 
 	HSI pix;
 	pix.h = h;
