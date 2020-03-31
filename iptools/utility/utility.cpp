@@ -327,23 +327,35 @@ void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& reg
 					// thresholding gradient amplitude for three channels
 					if (red_gradient_amplitude < T) {
 						red_edge_detection.setPixel(i, j, RED, MINRGB);
+						red_edge_detection.setPixel(i, j, GREEN, MINRGB);
+						red_edge_detection.setPixel(i, j, BLUE, MINRGB);
 					}
 					else {
 						red_edge_detection.setPixel(i, j, RED, MAXRGB);
+						red_edge_detection.setPixel(i, j, GREEN, MAXRGB);
+						red_edge_detection.setPixel(i, j, BLUE, MAXRGB);
 					}
 
 					if (green_gradient_amplitude < T) {
+						green_edge_detection.setPixel(i, j, RED, MINRGB);
 						green_edge_detection.setPixel(i, j, GREEN, MINRGB);
+						green_edge_detection.setPixel(i, j, BLUE, MINRGB);
 					}
 					else {
+						green_edge_detection.setPixel(i, j, RED, MAXRGB);
 						green_edge_detection.setPixel(i, j, GREEN, MAXRGB);
+						green_edge_detection.setPixel(i, j, BLUE, MAXRGB);
 					}
 
 					if (blue_gradient_amplitude < T) {
-						blue_edge_detection.setPixel(i, j, BLUE, MINRGB);
+						blue_edge_detection.setPixel(i, j, RED, MINRGB);
+						blue_edge_detection.setPixel(i, j, GREEN, MINRGB);
+						blue_edge_detection.setPixel(i, j, BLUE, MINRGB);					
 					}
 					else {
-						blue_edge_detection.setPixel(i, j, BLUE, MAXRGB);
+						blue_edge_detection.setPixel(i, j, RED, MAXRGB);
+						blue_edge_detection.setPixel(i, j, GREEN, MAXRGB);
+						blue_edge_detection.setPixel(i, j, BLUE, MAXRGB);	
 					}
 
 					// thresholding the combination of the three channels
@@ -352,16 +364,28 @@ void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& reg
 						green_gradient_amplitude < T ||
 						blue_gradient_amplitude < T
 					) {
-						tgt.setPixel(i, j, MINRGB);
+						tgt.setPixel(i, j, RED, MINRGB);
+						tgt.setPixel(i, j, GREEN, MINRGB);
+						tgt.setPixel(i, j, BLUE, MINRGB);
 					}
 					else {
-						tgt.setPixel(i, j, MAXRGB);
+						tgt.setPixel(i, j, RED, MAXRGB);
+						tgt.setPixel(i, j, GREEN, MAXRGB);
+						tgt.setPixel(i, j, BLUE, MAXRGB);
 					}
 				}
 				else {
-					tgt.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
+					tgt.setPixel(i, j, RED, checkValue(temp_img.getPixel(i, j, RED)));
+					tgt.setPixel(i, j, GREEN, checkValue(temp_img.getPixel(i, j, GREEN)));
+					tgt.setPixel(i, j, BLUE, checkValue(temp_img.getPixel(i, j, BLUE)));
 					red_edge_detection.setPixel(i, j, RED, checkValue(temp_img_red.getPixel(i, j, RED)));
+					red_edge_detection.setPixel(i, j, GREEN, checkValue(temp_img_red.getPixel(i, j, GREEN)));
+					red_edge_detection.setPixel(i, j, BLUE, checkValue(temp_img_red.getPixel(i, j, BLUE)));
+					green_edge_detection.setPixel(i, j, RED, checkValue(temp_img_green.getPixel(i, j, RED)));
 					green_edge_detection.setPixel(i, j, GREEN, checkValue(temp_img_green.getPixel(i, j, GREEN)));
+					green_edge_detection.setPixel(i, j, BLUE, checkValue(temp_img_green.getPixel(i, j, BLUE)));
+					blue_edge_detection.setPixel(i, j, RED, checkValue(temp_img_blue.getPixel(i, j, RED)));
+					blue_edge_detection.setPixel(i, j, GREEN, checkValue(temp_img_blue.getPixel(i, j, GREEN)));
 					blue_edge_detection.setPixel(i, j, BLUE, checkValue(temp_img_blue.getPixel(i, j, BLUE)));
 				}
 			}
