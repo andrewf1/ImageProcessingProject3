@@ -443,8 +443,6 @@ RGB HSItoRGBI(HSI pix) {
 
 	double x = i * (1 - s);
 
-	cout << "x = " << x << endl << "y = " << y << endl << "z = " << z << endl;
-
 	if (h < ((2 * PI) / 3)) {
 		RGB rgb_pix;
 		double y = i * (1 + (s * cos(h) / cos(PI/(3 - h))));
