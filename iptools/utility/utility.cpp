@@ -442,13 +442,13 @@ RGB HSItoRGBI(HSI pix) {
 	i = pix.i/(double)255;
 
 	double x = i * (1 - s);
-	double y = i * (1 + (s * cos(h) / cos(PI/(3 - h))));
-	double z = (3 * i) - (x + y);
 
 	cout << "x = " << x << endl << "y = " << y << endl << "z = " << z << endl;
 
 	if (h < ((2 * PI) / 3)) {
 		RGB rgb_pix;
+		double y = i * (1 + (s * cos(h) / cos(PI/(3 - h))));
+		double z = (3 * i) - (x + y);
 		rgb_pix.r = y * 255;
 		rgb_pix.g = z * 255;
 		rgb_pix.b = x * 255;
@@ -459,6 +459,8 @@ RGB HSItoRGBI(HSI pix) {
 		h < ((4 * PI) / 3)	
 	) {
 		h -= ((2 * PI) / 3);
+		double y = i * (1 + (s * cos(h) / cos(PI/(3 - h))));
+		double z = (3 * i) - (x + y);
 		RGB rgb_pix;
 		rgb_pix.r = x * 255;
 		rgb_pix.g = y * 255;
@@ -470,6 +472,8 @@ RGB HSItoRGBI(HSI pix) {
 		h < (2 * PI)
 	) {
 		h -= ((4 * PI)/ 3);
+		double y = i * (1 + (s * cos(h) / cos(PI/(3 - h))));
+		double z = (3 * i) - (x + y);
 		RGB rgb_pix;
 		rgb_pix.r = z * 255;
 		rgb_pix.g = x * 255;
