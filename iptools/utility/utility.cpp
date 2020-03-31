@@ -409,9 +409,9 @@ void::utility::RGBEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 /*-----------------------------------------------------------------------**/
 HSI RGBtoHSI(int r, int g, int b) {
 	double h, s, i;
-	r = r / (r + g + b);
-	g = g / (r + g + b);
-	b = b / (r + g + b);
+	r = (double)r / (double)(r + g + b);
+	g = (double)g / (double)(r + g + b);
+	b = (double)b / (double)(r + g + b);
 
 	double num = 0.5 * ((r - g) + (r - b));
 	double den = sqrt(pow(r - g, 2) + ((r - b) * (g - b)));
