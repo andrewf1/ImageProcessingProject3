@@ -423,7 +423,7 @@ HSI RGBtoHSI(int r, int g, int b) {
 		h = ((2 * PI) - (acos(num/den)));
 	}
 
-	s = 1 - (3 * min(min(r, g), b));
+	s = 1 - (3 * min(min(norm_r, norm_g), norm_b));
 	i = (double)(r + g + b) / (double)(3 * 255);
 
 	HSI pix;
