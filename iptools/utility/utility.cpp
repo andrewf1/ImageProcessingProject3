@@ -360,8 +360,8 @@ void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& reg
 
 					// thresholding the combination of the three channels
 					if (
-						red_gradient_amplitude < T ||
-						green_gradient_amplitude < T ||
+						red_gradient_amplitude < T &&
+						green_gradient_amplitude < T &&
 						blue_gradient_amplitude < T
 					) {
 						tgt.setPixel(i, j, RED, MINRGB);
