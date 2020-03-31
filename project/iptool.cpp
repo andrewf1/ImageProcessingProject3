@@ -85,7 +85,7 @@ int main (int argc, char** argv)
             utility::grayEdgeDetection(src, tgt, regions, outfile);
         }
         else if (func_name == "color_edge") {
-            // utility::colorEdgeDetection(src, tgt, regions, outfile);
+            utility::colorEdgeDetection(src, tgt, regions, outfile);
         }
         else {
             cout << "ERROR: Function DNE" << endl;

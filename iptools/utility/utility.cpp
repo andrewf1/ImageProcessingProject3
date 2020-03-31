@@ -118,6 +118,21 @@ int getPixelIfInROI(image& src, int i, int j, roi& reg) {
 	}
 }
 
+// overloaded function to get the pixel if in ROI when also given a particular color
+int getPixelIfInROI(image& src, int i, int j, roi& reg, channel color) {
+	if (
+		i >= reg.y && 
+		i < (reg.y + reg.sy) &&
+		j >= reg.x &&
+		j < (reg.x + reg.sx)
+	) {	// In the ROI
+		return src.getPixel(i, j, color);
+	}
+	else {
+		return 0;
+	}
+}
+
 gradient_amplitude getGradientXY(image& src, int i, int j, roi reg) {
 	int x_grad = 0, y_grad = 0;
 	gradient_amplitude ga;
@@ -138,6 +153,37 @@ gradient_amplitude getGradientXY(image& src, int i, int j, roi reg) {
 		getPixelIfInROI(src, i - 1, j - 1, reg) -
 		getPixelIfInROI(src, i, j - 1, reg) * 2 -
 		getPixelIfInROI(src, i + 1, j - 1, reg) 
+	);
+
+	x_grad /= 8;
+	ga.gx = x_grad;
+
+	y_grad /= 8;
+	ga.gy = y_grad;
+
+	return ga;
+}
+
+gradient_amplitude getGradientXY(image& src, int i, int j, roi reg, channel color) {
+	int x_grad = 0, y_grad = 0;
+	gradient_amplitude ga;
+
+	x_grad = (
+		getPixelIfInROI(src, i + 1, j - 1, reg, color) +
+		getPixelIfInROI(src, i + 1, j, reg, color) * 2 +
+		getPixelIfInROI(src, i + 1, j + 1, reg, color) -
+		getPixelIfInROI(src, i - 1, j - 1, reg, color) -
+		getPixelIfInROI(src, i - 1, j, reg, color) * 2 -
+		getPixelIfInROI(src, i - 1, j + 1, reg, color)
+	);
+
+	y_grad = (
+		getPixelIfInROI(src, i + 1, j + 1, reg, color) +
+		getPixelIfInROI(src, i, j + 1, reg, color) * 2 +
+		getPixelIfInROI(src, i - 1, j + 1, reg, color) -
+		getPixelIfInROI(src, i - 1, j - 1, reg, color) -
+		getPixelIfInROI(src, i, j - 1, reg, color) * 2 -
+		getPixelIfInROI(src, i + 1, j - 1, reg, color) 
 	);
 
 	x_grad /= 8;
@@ -233,9 +279,16 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 /*-----------------------------------------------------------------------**/
 void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& regions, char* outfile) {
 	tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
+	image red_edge_detection, green_edge_detection, blue_edge_detection;
+	red_edge_detection.resize(src.getNumberOfRows(), src.getNumberOfColumns());
+	green_edge_detection.resize(src.getNumberOfRows(), src.getNumberOfColumns());
+	blue_edge_detection.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 
-	image temp_img;
+	image temp_img, temp_img_red, temp_img_green, temp_img_blue;
 	temp_img.copyImage(src);
+	temp_img_red.copyImage(src);
+	temp_img_green.copyImage(src);
+	temp_img_blue.copyImage(src);
 
 	for (int r = 0; r < regions.size(); r++) {
 		int x = regions.at(r).x;
@@ -245,6 +298,9 @@ void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& reg
 		int T = regions.at(r).color_threshold;
 		int angle = regions.at(r).color_direction;
 
+		double red_gradient_amplitude, green_gradient_amplitude, blue_gradient_amplitude;
+		double red_pixel_angle, green_pixel_angle, blue_pixel_angle;
+
 		for (int i = 0; i < temp_img.getNumberOfRows(); i++) {
 			for (int j = 0; j < temp_img.getNumberOfColumns(); j++) {
 				if (
@@ -253,13 +309,75 @@ void::utility::colorEdgeDetection(image& src, image& tgt, const vector<roi>& reg
 					j >= x &&
 					j < (x + sx)
 				) { // inside the region
+					int red_gx = getGradientXY(temp_img, i, j, regions.at(r), RED).gx;
+					int red_gy = getGradientXY(temp_img, i, j, regions.at(r), RED).gy;
+					int green_gx = getGradientXY(temp_img, i, j, regions.at(r), GREEN).gx;
+					int green_gy = getGradientXY(temp_img, i, j, regions.at(r), GREEN).gy;
+					int blue_gx = getGradientXY(temp_img, i, j, regions.at(r), BLUE).gx;
+					int blue_gy = getGradientXY(temp_img, i, j, regions.at(r), BLUE).gy;
 
+					red_gradient_amplitude = sqrt(pow(red_gx, 2) + pow(red_gy, 2));
+					green_gradient_amplitude = sqrt(pow(green_gx, 2) + pow(green_gy, 2));
+					blue_gradient_amplitude = sqrt(pow(blue_gx, 2) + pow(blue_gy, 2));
+
+					red_pixel_angle = atan((double)red_gy/(double)red_gx) * (180/PI);
+					green_pixel_angle = atan((double)green_gy/(double)green_gx) * (180/PI);
+					blue_pixel_angle = atan((double)blue_gy/(double)blue_gx) * (180/PI);
+
+					// thresholding gradient amplitude for three channels
+					if (red_gradient_amplitude < T) {
+						red_edge_detection.setPixel(i, j, RED, MINRGB);
+					}
+					else {
+						red_edge_detection.setPixel(i, j, RED, MAXRGB);
+					}
+
+					if (green_gradient_amplitude < T) {
+						green_edge_detection.setPixel(i, j, GREEN, MINRGB);
+					}
+					else {
+						green_edge_detection.setPixel(i, j, GREEN, MAXRGB);
+					}
+
+					if (blue_gradient_amplitude < T) {
+						blue_edge_detection.setPixel(i, j, BLUE, MINRGB);
+					}
+					else {
+						blue_edge_detection.setPixel(i, j, BLUE, MAXRGB);
+					}
+
+					// thresholding the combination of the three channels
+					if (
+						red_gradient_amplitude < T ||
+						green_gradient_amplitude < T ||
+						blue_gradient_amplitude < T
+					) {
+						tgt.setPixel(i, j, MINRGB);
+					}
+					else {
+						tgt.setPixel(i, j, MAXRGB);
+					}
 				}
 				else {
-
+					tgt.setPixel(i, j, checkValue(temp_img.getPixel(i, j)));
+					red_edge_detection.setPixel(i, j, RED, checkValue(temp_img_red.getPixel(i, j, RED)));
+					green_edge_detection.setPixel(i, j, GREEN, checkValue(temp_img_green.getPixel(i, j, GREEN)));
+					blue_edge_detection.setPixel(i, j, BLUE, checkValue(temp_img_blue.getPixel(i, j, BLUE)));
 				}
 			}
 		}
 		temp_img.copyImage(tgt);
+		temp_img_red.copyImage(red_edge_detection);
+		temp_img_green.copyImage(green_edge_detection);
+		temp_img_blue.copyImage(blue_edge_detection);
 	}
+
+	char red_img_name[100] = "red_ed_";
+	red_edge_detection.save(strcat(red_img_name, outfile));
+
+	char green_img_name[100] = "green_ed_";
+	green_edge_detection.save(strcat(green_img_name, outfile));
+
+	char blue_img_name[100] = "blue_ed_";
+	blue_edge_detection.save(strcat(blue_img_name, outfile));
 }
