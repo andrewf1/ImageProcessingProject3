@@ -437,10 +437,6 @@ RGB HSItoRGB(HSI pix) {
 	double h, s, i;
 	int r, g, b;
 
-	// h = pix.h * (PI/180);
-	// s = pix.s/(double)100;
-	// i = pix.i/(double)255;
-
 	h = pix.h;
 	s = pix.s;
 	i = pix.i;
@@ -478,6 +474,28 @@ RGB HSItoRGB(HSI pix) {
 	}
 }
 
+double calculateIValue(image& src, int i, int j, const roi& reg) {
+	if (
+		i >= reg.y && 
+		i < (reg.y + reg.sy) &&
+		j >= reg.x &&
+		j < (reg.x + reg.sx)
+	) {	// In the ROI
+		int rgb_sum = (
+			src.getPixel(i, j, RED) +
+			src.getPixel(i, j, GREEN) +
+			src.getPixel(i, j, BLUE)
+		);
+
+		double i_val = (double)rgb_sum / (double)(3 * 255);
+
+		return i_val;
+	}
+	else {
+		return 0;
+	}
+}
+
 void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& regions, char* outfile) {
 	tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 	
@@ -485,7 +503,6 @@ void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& region
 	grad_amplitude_img.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 
 	image temp_img, temp_img_grad_amp;
-	double gradient_amplitude;
 
 	temp_img.copyImage(src);
 	temp_img_grad_amp.copyImage(src);
@@ -510,23 +527,69 @@ void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& region
 						temp_img.getPixel(i, j, BLUE)
 					);
 
-					cout << "RGB before: " << temp_img.getPixel(i, j, RED) << ", " << temp_img.getPixel(i, j, GREEN) << ", " << temp_img.getPixel(i, j, BLUE) << endl;
+					int gx = 0, gy = 0;
+					gradient_amplitude ga;
 
-					cout << "HSI: " << hsi_pixel.h << ", " << hsi_pixel.s << ", " << hsi_pixel.i << endl;
+					gx = (
+						calculateIValue(temp_img, i + 1, j - 1, regions.at(r)) +
+						calculateIValue(temp_img, i + 1, j, regions.at(r)) * 2 +
+						calculateIValue(temp_img, i + 1, j + 1, regions.at(r)) -
+						calculateIValue(temp_img, i - 1, j - 1, regions.at(r)) -
+						calculateIValue(temp_img, i - 1, j, regions.at(r)) * 2 -
+						calculateIValue(temp_img, i - 1, j + 1, regions.at(r))
+					);
 
-					RGB rgb_pixel = HSItoRGB(hsi_pixel);
-					tgt.setPixel(i, j, RED, checkValue(rgb_pixel.r));
-					tgt.setPixel(i, j, GREEN, checkValue(rgb_pixel.g));
-					tgt.setPixel(i, j, BLUE, checkValue(rgb_pixel.b));
-					cout << "RGB after: " << rgb_pixel.r << ", " << rgb_pixel.g << ", " << rgb_pixel.b << endl;	
+					gy = (
+						calculateIValue(temp_img, i + 1, j + 1, regions.at(r)) +
+						calculateIValue(temp_img, i, j + 1, regions.at(r)) * 2 +
+						calculateIValue(temp_img, i - 1, j + 1, regions.at(r)) -
+						calculateIValue(temp_img, i - 1, j - 1, regions.at(r)) -
+						calculateIValue(temp_img, i, j - 1, regions.at(r)) * 2 -
+						calculateIValue(temp_img, i + 1, j - 1, regions.at(r)) 
+					);
+
+					gx /= 8;
+					ga.gx = gx;
+
+					gy /= 8;
+					ga.gy = gy;
+
+					double ga_val = sqrt(pow(gx, 2) + pow(gy, 2));
+
+					// setting image to gradient amplitude intensity
+					HSI new_hsi_pix = hsi_pixel;
+					new_hsi_pix.i = ga_val;
+					RGB new_rgb_pixel = HSItoRGB(new_hsi_pix);
+					grad_amplitude_img.setPixel(i, j, RED, checkValue(new_rgb_pixel.r));
+					grad_amplitude_img.setPixel(i, j, GREEN, checkValue(new_rgb_pixel.g));
+					grad_amplitude_img.setPixel(i, j, BLUE, checkValue(new_rgb_pixel.b));
+
+					// setting image to binarized values
+					if (ga_val < T) {
+						tgt.setPixel(i, j, RED, checkValue(MINRGB));
+						tgt.setPixel(i, j, GREEN, checkValue(MINRGB));
+						tgt.setPixel(i, j, BLUE, checkValue(MINRGB));						
+					}
+					else {
+						tgt.setPixel(i, j, RED, checkValue(MAXRGB));
+						tgt.setPixel(i, j, GREEN, checkValue(MAXRGB));
+						tgt.setPixel(i, j, BLUE, checkValue(MAXRGB));							
+					}
 				}
 				else {
 					tgt.setPixel(i, j, RED, temp_img.getPixel(i, j, RED));
 					tgt.setPixel(i, j, GREEN, temp_img.getPixel(i, j, GREEN));
 					tgt.setPixel(i, j, BLUE, temp_img.getPixel(i, j, BLUE));
+					grad_amplitude_img.setPixel(i, j, RED, temp_img_grad_amp.getPixel(i, j, RED));
+					grad_amplitude_img.setPixel(i, j, GREEN, temp_img_grad_amp.getPixel(i, j, GREEN));
+					grad_amplitude_img.setPixel(i, j, BLUE, temp_img_grad_amp.getPixel(i, j, BLUE));
 				}
 			}
 		}
 		temp_img.copyImage(tgt);
+		temp_img_grad_amp.copyImage(grad_amplitude_img);
 	}
+
+	char grad_amp_img_name[100] = "grad_ampltiude_";
+	grad_amplitude_img.save(strcat(grad_amp_img_name, outfile));
 }
