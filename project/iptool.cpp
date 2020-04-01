@@ -99,13 +99,13 @@ int main (int argc, char** argv)
             auto start = chrono::high_resolution_clock::now();
             utility::RGBEdgeDetection(src, tgt, regions, outfile);
             auto end = chrono::high_resolution_clock::now();
-            cout << "Gray Edge time for " << src_name << " = " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
+            cout << "RGB Edge time for " << src_name << " = " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
         }
         else if (func_name == "hsi_edge") {
             auto start = chrono::high_resolution_clock::now();
             utility::HSIEdgeDetection(src, tgt, regions, outfile);
             auto end = chrono::high_resolution_clock::now();
-            cout << "Gray Edge time for " << src_name << " = " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
+            cout << "HSI Edge time for " << src_name << " = " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
         }
         else {
             cout << "ERROR: Function DNE" << endl;
