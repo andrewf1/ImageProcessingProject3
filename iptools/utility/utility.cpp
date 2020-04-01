@@ -441,11 +441,15 @@ RGB HSItoRGB(HSI pix) {
 	// s = pix.s/(double)100;
 	// i = pix.i/(double)255;
 
+	h = pix.h;
+	s = pix.s;
+	i = pix.i;
+
 	double x = i * (1 - s);
 
 	if (h < ((2 * PI) / 3)) {
 		RGB rgb_pix;
-		double y = i * (1 + (s * cos(h) / cos(PI/3) - h));
+		double y = i * (1 + (s * cos(h) / cos((PI/3) - h)));
 		double z = (3 * i) - (x + y);
 		rgb_pix.r = y * 255;
 		rgb_pix.g = z * 255;
@@ -453,8 +457,8 @@ RGB HSItoRGB(HSI pix) {
 		return rgb_pix;
 	}
 	else if (h < ((4 * PI) / 3)) {
-		h -= ((2 * PI) / 3);
-		double y = i * (1 + (s * cos(h) / cos(PI/3) - h));
+		auto new_h = h - ((2 * PI) / 3);
+		double y = i * (1 + (s * cos(new_h) / cos((PI/3) - new_h)));
 		double z = (3 * i) - (x + y);
 		RGB rgb_pix;
 		rgb_pix.r = x * 255;
@@ -463,8 +467,8 @@ RGB HSItoRGB(HSI pix) {
 		return rgb_pix;
 	}
 	else  {
-		h -= ((4 * PI)/ 3);
-		double y = i * (1 + (s * cos(h) / cos(PI/(3 - h))));
+		auto new_h = h - ((4 * PI) / 3);
+		double y = i * (1 + (s * cos(new_h) / cos((PI/3) - new_h)));
 		double z = (3 * i) - (x + y);
 		RGB rgb_pix;
 		rgb_pix.r = z * 255;
