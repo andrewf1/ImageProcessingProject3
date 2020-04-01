@@ -445,7 +445,7 @@ RGB HSItoRGBI(HSI pix) {
 
 	if (h < ((2 * PI) / 3)) {
 		RGB rgb_pix;
-		double y = i * (1 + (s * cos(h) / cos(PI/(3 - h))));
+		double y = i * (1 + (s * cos(h) / cos(PI/3) - h));
 		double z = (3 * i) - (x + y);
 		rgb_pix.r = y * 255;
 		rgb_pix.g = z * 255;
@@ -454,7 +454,7 @@ RGB HSItoRGBI(HSI pix) {
 	}
 	else if (h < ((4 * PI) / 3)) {
 		h -= ((2 * PI) / 3);
-		double y = i * (1 + (s * cos(h) / cos(PI/(3 - h))));
+		double y = i * (1 + (s * cos(h) / cos(PI/3) - h));
 		double z = (3 * i) - (x + y);
 		RGB rgb_pix;
 		rgb_pix.r = x * 255;
