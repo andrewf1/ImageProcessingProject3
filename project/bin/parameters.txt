@@ -6,6 +6,10 @@ wheel.pgm wheel_d.pgm gray_edge 1
 ball.ppm ball_edge_d.ppm rgb_edge 2
 100 50 100 100  10 45
 210 200 280 215 10 45
+wine.ppm wine_edge_d.ppm rgb_edge 3
+0 0 100 300 10 45
+200 600 250 100 10 45
+400 400 100 100 10 45
 frog.ppm frog_hsi_edge_d.ppm hsi_edge 2
 130 30 200 200 10 45
 400 300 100 30 10 45
