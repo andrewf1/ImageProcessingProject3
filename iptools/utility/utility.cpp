@@ -528,7 +528,6 @@ void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& region
 					);
 
 					int gx = 0, gy = 0;
-					gradient_amplitude ga;
 
 					gx = (
 						calculateIValue(temp_img, i + 1, j - 1, regions.at(r)) +
@@ -549,15 +548,14 @@ void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& region
 					);
 
 					gx /= 8;
-					ga.gx = gx;
-
 					gy /= 8;
-					ga.gy = gy;
-
 					double ga_val = sqrt(pow(gx, 2) + pow(gy, 2));
+					cout << "gx = " << gx << endl << "gy = " << gy << endl << "ga_val = " << ga_val << endl;
 
 					// setting image to gradient amplitude intensity
-					HSI new_hsi_pix = hsi_pixel;
+					HSI new_hsi_pix;
+					new_hsi_pix.h = hsi_pixel.h;
+					new_hsi_pix.s = hsi_pixel.s;
 					new_hsi_pix.i = ga_val;
 					RGB new_rgb_pixel = HSItoRGB(new_hsi_pix);
 					grad_amplitude_img.setPixel(i, j, RED, checkValue(new_rgb_pixel.r));
