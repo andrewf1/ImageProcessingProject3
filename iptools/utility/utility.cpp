@@ -433,13 +433,13 @@ HSI RGBtoHSI(int r, int g, int b) {
 	return pix;
 }
 
-RGB HSItoRGBI(HSI pix) {
+RGB HSItoRGB(HSI pix) {
 	double h, s, i;
 	int r, g, b;
 
-	h = pix.h * (PI/180);
-	s = pix.s/(double)100;
-	i = pix.i/(double)255;
+	// h = pix.h * (PI/180);
+	// s = pix.s/(double)100;
+	// i = pix.i/(double)255;
 
 	double x = i * (1 - s);
 
@@ -510,7 +510,7 @@ void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& region
 
 					cout << "HSI: " << hsi_pixel.h << ", " << hsi_pixel.s << ", " << hsi_pixel.i << endl;
 
-					RGB rgb_pixel = HSItoRGBI(hsi_pixel);
+					RGB rgb_pixel = HSItoRGB(hsi_pixel);
 					tgt.setPixel(i, j, RED, checkValue(rgb_pixel.r));
 					tgt.setPixel(i, j, GREEN, checkValue(rgb_pixel.g));
 					tgt.setPixel(i, j, BLUE, checkValue(rgb_pixel.b));
