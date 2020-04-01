@@ -118,21 +118,6 @@ int getPixelIfInROI(image& src, int i, int j, roi& reg) {
 	}
 }
 
-// overloaded function to get the pixel if in ROI when also given a particular color
-int getPixelIfInROI(image& src, int i, int j, roi& reg, channel color) {
-	if (
-		i >= reg.y && 
-		i < (reg.y + reg.sy) &&
-		j >= reg.x &&
-		j < (reg.x + reg.sx)
-	) {	// In the ROI
-		return src.getPixel(i, j, color);
-	}
-	else {
-		return 0;
-	}
-}
-
 gradient_amplitude getGradientXY(image& src, int i, int j, roi reg) {
 	int x_grad = 0, y_grad = 0;
 	gradient_amplitude ga;
@@ -153,37 +138,6 @@ gradient_amplitude getGradientXY(image& src, int i, int j, roi reg) {
 		getPixelIfInROI(src, i - 1, j - 1, reg) -
 		getPixelIfInROI(src, i, j - 1, reg) * 2 -
 		getPixelIfInROI(src, i + 1, j - 1, reg) 
-	);
-
-	x_grad /= 8;
-	ga.gx = x_grad;
-
-	y_grad /= 8;
-	ga.gy = y_grad;
-
-	return ga;
-}
-
-gradient_amplitude getGradientXY(image& src, int i, int j, roi reg, channel color) {
-	int x_grad = 0, y_grad = 0;
-	gradient_amplitude ga;
-
-	x_grad = (
-		getPixelIfInROI(src, i + 1, j - 1, reg, color) +
-		getPixelIfInROI(src, i + 1, j, reg, color) * 2 +
-		getPixelIfInROI(src, i + 1, j + 1, reg, color) -
-		getPixelIfInROI(src, i - 1, j - 1, reg, color) -
-		getPixelIfInROI(src, i - 1, j, reg, color) * 2 -
-		getPixelIfInROI(src, i - 1, j + 1, reg, color)
-	);
-
-	y_grad = (
-		getPixelIfInROI(src, i + 1, j + 1, reg, color) +
-		getPixelIfInROI(src, i, j + 1, reg, color) * 2 +
-		getPixelIfInROI(src, i - 1, j + 1, reg, color) -
-		getPixelIfInROI(src, i - 1, j - 1, reg, color) -
-		getPixelIfInROI(src, i, j - 1, reg, color) * 2 -
-		getPixelIfInROI(src, i + 1, j - 1, reg, color) 
 	);
 
 	x_grad /= 8;
@@ -277,6 +231,53 @@ void utility::grayEdgeDetection(image& src, image& tgt, const vector<roi>& regio
 }
 
 /*-----------------------------------------------------------------------**/
+// overloaded function to get the pixel if in ROI when also given a particular color
+int getPixelIfInROI(image& src, int i, int j, roi& reg, channel color) {
+	if (
+		i >= reg.y && 
+		i < (reg.y + reg.sy) &&
+		j >= reg.x &&
+		j < (reg.x + reg.sx)
+	) {	// In the ROI
+		return src.getPixel(i, j, color);
+	}
+	else {
+		return 0;
+	}
+}
+
+// overloaded function to get the gradient amplitude
+gradient_amplitude getGradientXY(image& src, int i, int j, roi reg, channel color) {
+	int x_grad = 0, y_grad = 0;
+	gradient_amplitude ga;
+
+	x_grad = (
+		getPixelIfInROI(src, i + 1, j - 1, reg, color) +
+		getPixelIfInROI(src, i + 1, j, reg, color) * 2 +
+		getPixelIfInROI(src, i + 1, j + 1, reg, color) -
+		getPixelIfInROI(src, i - 1, j - 1, reg, color) -
+		getPixelIfInROI(src, i - 1, j, reg, color) * 2 -
+		getPixelIfInROI(src, i - 1, j + 1, reg, color)
+	);
+
+	y_grad = (
+		getPixelIfInROI(src, i + 1, j + 1, reg, color) +
+		getPixelIfInROI(src, i, j + 1, reg, color) * 2 +
+		getPixelIfInROI(src, i - 1, j + 1, reg, color) -
+		getPixelIfInROI(src, i - 1, j - 1, reg, color) -
+		getPixelIfInROI(src, i, j - 1, reg, color) * 2 -
+		getPixelIfInROI(src, i + 1, j - 1, reg, color) 
+	);
+
+	x_grad /= 8;
+	ga.gx = x_grad;
+
+	y_grad /= 8;
+	ga.gy = y_grad;
+
+	return ga;
+}
+
 void::utility::RGBEdgeDetection(image& src, image& tgt, const vector<roi>& regions, char* outfile) {
 	tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 	image red_edge_detection, green_edge_detection, blue_edge_detection;

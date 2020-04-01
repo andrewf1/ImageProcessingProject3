@@ -17,3 +17,5 @@ wine.ppm wine_hsi_edge_d.ppm hsi_edge 3
 0 0 100 300 10 45
 200 600 250 100 10 45
 400 400 100 100 10 45
+picasso.pgm picasso_edge_d.pgm gray_edge 1
+0 0 917 344 10 45

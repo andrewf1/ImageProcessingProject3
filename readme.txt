@@ -5,34 +5,35 @@ Parameters
 There is one file that is read by the program. It has very strict options for each 
 line in the file. It includes the information for each ROI, parameters for the 
 various functions for each ROI, and the images the appropriate functions should be run on. 
-The first line is the number of ROIs (n) that the program will consider (maximum of 3). 
-The following n lines will be information given for the parameters for each ROI for each function. 
-Each of these n lines will contain the following information in the following order: x, y, sx, sy, 
-a (for regular histogram stretching), b (for regular histogram stretching), 
-a_red (for histogram stretching on red channel), b_red (for histogram stretching on red channel), 
-a_green (for histogram stretching on green channel), b_green (for histogram stretching on green channel),
-a_blue (for histogram stretching on blue channel), b_blue (for histogram stretching on blue channel), 
-a_rgb (for histogram stretching on all 3 rgb channel together), and b_rgb (for histogram stretching on all 3 rgb channel together). 
-They will not contain commas. After those n lines, the rest of the 
-lines in the file should be images to run the specified functions on and how to name the output image. 
-These lines will be in this form: input_image output_image function. Where the function can be 
-hist_stretch (for Histogram Stretching), opt_thresh (for Optimal Thresholding), 
-comb_hist_thresh (for Combining the previous 2 image analysis operations), 
-hist_red (for Histogram Stretching on the red channel of an image), hist_green (for Histogram Stretching on the green channel of an image),
-hist_blue (for Histogram Stretching on the blue channel of an image), 
-and hist_rgb (for Histogram Stretching on all 3 rgb channels of an image). A side-note is that the parameters file 
-must end with an empty newline. Another note is that the parameters file should be in the following path: 
-/Project2/project/bin/. The following image is an example of a properly constructed parameters file 
-called parameters.txt:
-1
-0 0 400 300 100 200 50 150 50 150 50 150 50 150
-park.pgm park_hs.pgm hist_stretch
-floor.pgm floor_ot.pgm opt_thresh
-park.pgm park_comb_hist_thresh.pgm comb_hist_thresh
-ball.ppm ball_hist_red.ppm hist_red
-ball.ppm ball_hist_green.ppm hist_green
-ball.ppm ball_hist_blue.ppm hist_blue
-ball.ppm ball_hist_rgb.ppm hist_rgb
+There are cycles for the lines. For every image/function that you want to have operated on,
+the first line will contain the name of the source image, what you wish to name the target image,
+the function that you want to operate over the image on, and the number of ROIs (n) used for the
+function. The following n lines will be information given for the parameters for each ROI for each 
+function. Each of these n lines will contain the following information in the following order: x, y, sx, sy, 
+the threshold, and the direction. Everything is separated by spaces. The first lines will be in this form: 
+input_image output_image function. Where the function can be gray_edge (for gray edge detection), 
+rgb_edge (for RGB color edge detection), hsi_edge (for HSI color edge detection). A side-note is that the 
+parameters file should be in the following path: /Project2/project/bin/. The following image is an example of 
+a properly constructed parameters file called parameters.txt:
+baboon.pgm baboon_edge_d.pgm gray_edge 2
+0 0 100 300 10 45
+320 80 150 150 15 100
+wheel.pgm wheel_d.pgm gray_edge 1
+0 0 300 300 10 45
+ball.ppm ball_edge_d.ppm rgb_edge 2
+100 50 100 100  10 45
+210 200 280 215 10 45
+wine.ppm wine_edge_d.ppm rgb_edge 3
+0 0 100 300 10 45
+200 600 250 100 10 45
+400 400 100 100 10 45
+ball.ppm ball_hsi_edge_d.ppm hsi_edge 2
+100 50 100 100  10 45
+210 200 280 215 10 45
+wine.ppm wine_hsi_edge_d.ppm hsi_edge 3
+0 0 100 300 10 45
+200 600 250 100 10 45
+400 400 100 100 10 45
 
 
 Compilation and Execution

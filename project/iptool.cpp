@@ -52,8 +52,6 @@ int main (int argc, char** argv)
                 pch = strtok(NULL, " ");
                 int sy = atoi(pch);
 
-                cout << "func_name = " << func_name << endl;
-
                 if (func_name == "gray_edge") {
                     pch = strtok(NULL, " ");
                     int gray_thresh = atoi(pch);
@@ -92,20 +90,28 @@ int main (int argc, char** argv)
         }
 
         if (func_name == "gray_edge") {
+            auto start = chrono::high_resolution_clock::now();
             utility::grayEdgeDetection(src, tgt, regions, outfile);
+            auto end = chrono::high_resolution_clock::now();
+            cout << "Gray Edge time for " << src_name << " = " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
         }
         else if (func_name == "rgb_edge") {
+            auto start = chrono::high_resolution_clock::now();
             utility::RGBEdgeDetection(src, tgt, regions, outfile);
+            auto end = chrono::high_resolution_clock::now();
+            cout << "Gray Edge time for " << src_name << " = " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
         }
         else if (func_name == "hsi_edge") {
+            auto start = chrono::high_resolution_clock::now();
             utility::HSIEdgeDetection(src, tgt, regions, outfile);
+            auto end = chrono::high_resolution_clock::now();
+            cout << "Gray Edge time for " << src_name << " = " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
         }
         else {
             cout << "ERROR: Function DNE" << endl;
             exit(1);
         }
 
-        cout << "saving tgt: " << outfile << endl;
         tgt.save(outfile);
     }
 
