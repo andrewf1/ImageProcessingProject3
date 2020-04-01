@@ -528,7 +528,7 @@ void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& region
 						temp_img.getPixel(i, j, BLUE)
 					);
 
-					int gx = 0, gy = 0;
+					double gx = 0, gy = 0;
 
 					gx = (
 						calculateIValue(temp_img, i + 1, j - 1, regions.at(r)) +
