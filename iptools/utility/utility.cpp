@@ -489,7 +489,6 @@ double calculateIValue(image& src, int i, int j, const roi& reg) {
 
 		double i_val = (double)rgb_sum / (double)(3 * 255);
 		
-		cout << "rgb_sum = " << rgb_sum << endl << "i_val = " << i_val << endl;
 		return i_val;
 	}
 	else {
@@ -551,7 +550,6 @@ void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& region
 					gx /= 8;
 					gy /= 8;
 					double ga_val = sqrt(pow(gx, 2) + pow(gy, 2));
-					cout << "gx = " << gx << endl << "gy = " << gy << endl << "ga_val = " << ga_val << endl;
 
 					// setting image to gradient amplitude intensity
 					HSI new_hsi_pix;
