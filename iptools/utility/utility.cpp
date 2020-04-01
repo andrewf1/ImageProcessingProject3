@@ -564,15 +564,19 @@ void utility::HSIEdgeDetection(image& src, image& tgt, const vector<roi>& region
 					grad_amplitude_img.setPixel(i, j, BLUE, checkValue(new_rgb_pixel.b));
 
 					// setting image to binarized values
-					if (ga_val < T) {
-						tgt.setPixel(i, j, RED, checkValue(MINRGB));
-						tgt.setPixel(i, j, GREEN, checkValue(MINRGB));
-						tgt.setPixel(i, j, BLUE, checkValue(MINRGB));						
+					if (
+						new_rgb_pixel.r < T &&
+						new_rgb_pixel.g < T &&
+						new_rgb_pixel.b < T
+					) {
+						tgt.setPixel(i, j, RED, MINRGB);
+						tgt.setPixel(i, j, GREEN, MINRGB);
+						tgt.setPixel(i, j, BLUE, MINRGB);
 					}
 					else {
-						tgt.setPixel(i, j, RED, checkValue(MAXRGB));
-						tgt.setPixel(i, j, GREEN, checkValue(MAXRGB));
-						tgt.setPixel(i, j, BLUE, checkValue(MAXRGB));							
+						tgt.setPixel(i, j, RED, MAXRGB);
+						tgt.setPixel(i, j, GREEN, MAXRGB);
+						tgt.setPixel(i, j, BLUE, MAXRGB);
 					}
 				}
 				else {
