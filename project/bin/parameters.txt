@@ -1,11 +1,11 @@
-tree.pgm tree_edge_d.pgm gray_edge 2
-50 50 100 100 10 45
-300 300 50 50 15 100
+baboon.pgm baboon_edge_d.pgm gray_edge 2
+0 0 100 300 10 45
+320 80 150 150 15 100
 wheel.pgm wheel_d.pgm gray_edge 1
 0 0 300 300 10 45
-frog.ppm frog_edge_d.ppm rgb_edge 2
-130 30 200 200 10 45
-400 300 100 30 10 45
+ball.ppm ball_edge_d.ppm rgb_edge 2
+100 50 100 100  10 45
+210 200 280 215 10 45
 frog.ppm frog_hsi_edge_d.ppm hsi_edge 2
 130 30 200 200 10 45
 400 300 100 30 10 45
